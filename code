@@ -1,0 +1,189 @@
+#include <iostream>
+#include <string>
+#include <map>
+
+using namespace std;
+
+// Supermarket class to handle billing operations
+class Supermarket {
+private:
+    map<string, int> inventory;
+    map<string, int> cart;
+    double totalBill;
+
+public:
+    Supermarket() {
+        // Initialize the inventory with some products and prices
+        inventory["apple"] = 10;
+        inventory["banana"] = 5;
+        inventory["orange"] = 8;
+        inventory["grapes"] = 15;
+
+        totalBill = 0;
+    }
+
+    void addToCart(const string& item, int quantity) {
+        if (inventory.find(item) != inventory.end()) {
+            cart[item] += quantity;
+            totalBill += inventory[item] * quantity;
+        }
+    }
+
+    void removeItem(const string& item) {
+        if (cart.find(item) != cart.end()) {
+            totalBill -= inventory[item] * cart[item];
+            cart.erase(item);
+        }
+    }
+
+    void displayCart() {
+        cout << "\nYour Cart:\n";
+        cout << "-------------------\n";
+        for (map<string, int>::const_iterator it = cart.begin(); it != cart.end(); ++it) {
+            cout << it->first << " x" << it->second << " = " << it->second * inventory[it->first] << endl;
+        }
+        cout << "-------------------\n";
+        cout << "Total Bill: $" << totalBill << endl;
+    }
+
+    double getTotalBill() const {
+        return totalBill;
+    }
+};
+
+// Admin class for handling administrator login
+class Admin {
+private:
+    string username;
+    string password;
+
+public:
+    Admin(const string& username, const string& password) : username(username), password(password) {}
+
+    bool login(const string& enteredUsername, const string& enteredPassword) const {
+        return (username == enteredUsername && password == enteredPassword);
+    }
+};
+
+// Customer class for handling customer login
+class Customer {
+private:
+    string username;
+    string password;
+
+public:
+    Customer(const string& username, const string& password) : username(username), password(password) {}
+
+    bool login(const string& enteredUsername, const string& enteredPassword) const {
+        return (username == enteredUsername && password == enteredPassword);
+    }
+};
+
+int main() {
+    // Create an instance of the supermarket
+    Supermarket supermarket;
+
+    // Create an instance of an admin with predefined credentials
+    Admin admin("jay", "123");
+
+    // Create an instance of a customer with predefined credentials
+    Customer customer("customer", "password");
+
+    int choice;
+
+    cout << "WELCOME TO JAY SUPERMARKET!\n";
+
+    // Login section
+    cout << "Choose a login option:\n";
+    cout << "1. Admin Login\n";
+    cout << "2. Customer Login\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    if (choice == 1) {
+        string username, password;
+
+        cout << "Admin Login\n";
+        cout << "Username: ";
+        cin >> username;
+        cout << "Password: ";
+        cin >> password;
+
+        if (admin.login(username, password)) {
+            // Admin logged in
+            cout << "\nAdmin logged in successfully!\n";
+
+            // Add your admin-related operations here
+            // For example, managing inventory, adding products, etc.
+        } else {
+            cout << "\nInvalid username or password. Exiting...\n";
+        }
+    } else if (choice == 2) {
+        string username, password;
+
+        cout << "Customer Login\n";
+        cout << "Username: ";
+        cin >> username;
+        cout << "Password: ";
+        cin >> password;
+
+        if (customer.login(username, password)) {
+            // Customer logged in
+            cout << "\nCustomer logged in successfully!\n";
+
+            // Add your customer-related operations here
+            // For example, adding items to cart, removing items, generating bills, etc.
+            int itemChoice, quantity;
+            string item;
+
+            do {
+                cout << "\nAvailable Items:\n";
+                cout << "-------------------\n";
+                cout << "1. Apple - $10\n";
+                cout << "2. Banana - $5\n";
+                cout << "3. Orange - $8\n";
+                cout << "4. Grapes - $15\n";
+                cout << "5. Done Shopping\n";
+                cout << "Enter your choice: ";
+                cin >> itemChoice;
+
+                switch (itemChoice) {
+                    case 1:
+                        item = "apple";
+                        break;
+                    case 2:
+                        item = "banana";
+                        break;
+                    case 3:
+                        item = "orange";
+                        break;
+                    case 4:
+                        item = "grapes";
+                        break;
+                    case 5:
+                        // Exit the shopping loop
+                        break;
+                    default:
+                        cout << "Invalid choice. Please try again.\n";
+                        continue;
+                }
+
+                if (itemChoice >= 1 && itemChoice <= 4) {
+                    cout << "Enter the quantity: ";
+                    cin >> quantity;
+                    supermarket.addToCart(item, quantity);
+                    cout << "Item added to cart!\n";
+                }
+            } while (itemChoice != 5);
+
+            // Display the cart and total bill
+            supermarket.displayCart();
+        } else {
+            cout << "\nInvalid username or password. Exiting...\n";
+        }
+    } else {
+        cout << "Invalid choice. Exiting...\n";
+    }
+
+    return 0;
+}
